@@ -1,0 +1,125 @@
+def mostrar_menu():
+    print("Bienvenido a Casa Feliz")
+    print("1. Comprar departamento")
+    print("2. Mostrar departamentos disponibles")
+    print("3. Ver listado de compradores")
+    print("4. Mostrar ganancias totales")
+    print("5. Salir")
+
+def imprimir_tablero(tablero):
+    for fila in tablero:
+        print("|".join(fila))
+        print("-" * (4 * len(fila) - 1))
+
+def crear_tablero(filas, columnas):
+    return [[" " for _ in range(columnas)] for _ in range(filas)]
+
+def comprar_departamento(tablero, compradores):
+    print("Comprar departamento")
+    imprimir_tablero(tablero)
+
+    while True:
+        try:
+            piso = int(input("Seleccione el piso (1-10): ")) - 1
+            if piso < 0 or piso >= len(tablero):
+                print("¡Error: El piso seleccionado está fuera del rango válido (1-10)!")
+                continue
+            tipo = input("Seleccione el tipo de departamento (A, B, C, D): ").upper()
+            if tipo not in ["A", "B", "C", "D"]:
+                print("¡Error: Tipo de departamento inválido!")
+                continue
+            if tablero[piso][(ord(tipo) - ord("A"))] == " ":
+                nombre = input("Ingrese su nombre: ")
+                if len(nombre) > 43:
+                    print("¡Error: wow su nombre es demasiado largo,intente con uno mas corto!")
+                    continue
+                if not nombre.isalpha():
+                    print("¡Error: El nombre solo puede contener letras!")
+                    continue
+                identificacion = input("Ingrese su rut: ")
+                if len(identificacion) != 9 or not identificacion.isdigit():
+                    print("¡Error: rut inválido!")
+                    continue
+                tablero[piso][(ord(tipo) - ord("A"))] = "X"
+                departamento = f"{tipo}{piso + 1}"
+                print(f"¡Departamento {departamento} comprado por {nombre} con éxito!")
+                compradores.append({"Nombre": nombre, "RUT": identificacion, "Departamento": departamento})
+                break
+            else:
+                print("El departamento seleccionado ya ha sido vendido. Por favor, seleccione otro.")
+        except ValueError:
+            print("¡Por favor, ingrese un número válido!")
+
+def mostrar_departamentos_disponibles(tablero):
+    print("Departamentos disponibles:")
+    imprimir_tablero(tablero)
+
+def ver_listado_compradores(compradores):
+    print("Listado de compradores:")
+    for comprador in compradores:
+        print(f"Nombre: {comprador['Nombre']}\tRUT: {comprador['RUT']}\tDepartamento: {comprador['Departamento']}")
+
+def mostrar_ganancias_totales(tablero):
+    ganancias = {"A": 3800, "B": 3000, "C": 2800, "D": 3500}
+    total_ganancias = 0
+    ventas_por_tipo = {"A": 0, "B": 0, "C": 0, "D": 0}
+
+    for piso, fila in enumerate(tablero):
+        for tipo, departamento in zip(["A", "B", "C", "D"], fila):
+            if departamento == "X":
+                ventas_por_tipo[tipo] += 1
+                total_ganancias += ganancias[tipo]
+
+    print("Ganancias totales:")
+    print("Tipo de Departamento\tCantidad Vendida\tPrecio\t\tTotal")
+
+    for tipo in ventas_por_tipo:
+        cantidad = ventas_por_tipo[tipo]
+        precio = ganancias[tipo]
+        total = cantidad * precio
+        print(f"{tipo}\t\t\t\t{cantidad}\t\t\t${precio}\t\t${total}")
+
+    print(f"\nGanancia total: ${total_ganancias}")
+
+
+tablero = crear_tablero(10, 4)
+compradores = []
+
+while True:
+    mostrar_menu()
+    opcion = input("Seleccione una opción: ")
+
+    if opcion == "1":
+        comprar_departamento(tablero, compradores)
+        volver = input("Presione Enter para volver al menú principal o ingrese 's' para salir: ")
+        if volver.lower() == "s":
+            print("gracias por preferirnos")
+            break
+
+    elif opcion == "2":
+        mostrar_departamentos_disponibles(tablero)
+        volver = input("Presione Enter para volver al menú principal o ingrese 's' para salir: ")
+        if volver.lower() == "s":
+            print("gracias por preferirnos")
+            break
+
+    elif opcion == "3":
+        ver_listado_compradores(compradores)
+        volver = input("Presione Enter para volver al menú principal o ingrese 's' para salir: ")
+        if volver.lower() == "s":
+            print("gracias por preferirnos")
+            break
+
+    elif opcion == "4":
+        mostrar_ganancias_totales(tablero)
+        volver = input("Presione Enter para volver al menú principal o ingrese 's' para salir: ")
+        if volver.lower() == "s":
+            print("gracias por preferirnos")
+            break
+
+    elif opcion == "5":
+        print("¡Gracias por visitar Casa Feliz!")
+        break
+
+    else:
+        print("Opción inválida. Por favor, seleccione una opción válida.")
